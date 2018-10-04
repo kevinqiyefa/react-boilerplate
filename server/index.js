@@ -13,9 +13,51 @@ const ngrok =
     : false;
 const { resolve } = require('path');
 const app = express();
+const db = require('./db');
+const bodyParser = require('body-parser');
 
 // If you need a backend, e.g. an API, add your custom backend-specific middleware here
 // app.use('/api', myApi);
+
+app.use(bodyParser.json());
+
+app.get('/api/strings', async (req, res, next) => {
+  try {
+    const results = await db.query('SELECT * FROM strings');
+    return res.json(results.rows);
+  } catch (err) {
+    return next(err);
+  }
+});
+
+app.post('/api/strings', async (req, res, next) => {
+  try {
+    const result = await db.query(
+      'INSERT INTO strings (string) VALUES ($1) RETURNING *',
+      [req.body.string],
+    );
+    return res.json(result.rows[0]);
+  } catch (err) {
+    return next(err);
+  }
+});
+
+// // errors handling
+// app.use((req, res, next) => {
+//   let err = new Error('Not Found');
+//   err.status = 404;
+//   next(err);
+// });
+
+// if (app.get('env') === 'development') {
+//   app.use((err, req, res, next) => {
+//     res.status(err.status || 500);
+//     res.send({
+//       message: err.message,
+//       error: err,
+//     });
+//   });
+// }
 
 // In production we need to pass these values in instead of relying on webpack
 setup(app, {
