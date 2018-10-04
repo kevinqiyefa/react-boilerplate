@@ -13,17 +13,41 @@
 
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
+import styled from 'styled-components';
+import { Helmet } from 'react-helmet';
 
 import HomePage from 'containers/HomePage/Loadable';
+import AddStringForm from 'containers/AddStringForm/Loadable';
+import DisplayStrings from 'containers/DisplayStrings/Loadable';
+
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
+import HeaderPage from 'components/HeaderPage';
+
+const ConetentWrapper = styled.div`
+  max-width: calc(768px + 16px * 2);
+  margin: 5em auto;
+  display: flex;
+  min-height: 100%;
+  padding: 0 16px;
+  flex-direction: row;
+  justify-content: center;
+`;
 
 export default function App() {
   return (
     <div>
-      <Switch>
-        <Route exact path="/" component={HomePage} />
-        <Route component={NotFoundPage} />
-      </Switch>
+      <Helmet titleTemplate="%s - String" defaultTitle="String">
+        <meta name="description" content="A React application" />
+      </Helmet>
+      <HeaderPage />
+      <ConetentWrapper>
+        <Switch>
+          <Route exact path="/" component={HomePage} />
+          <Route exact path="/add" component={AddStringForm} />
+          <Route exact path="/view" component={DisplayStrings} />
+          <Route component={NotFoundPage} />
+        </Switch>
+      </ConetentWrapper>
     </div>
   );
 }
